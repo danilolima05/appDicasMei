@@ -1,0 +1,63 @@
+version: '2'
+
+services:
+    php:
+        container_name: dev-php
+        build:
+            context: docker/php/php7.1
+        image: php:7.1
+        ports:
+            - 80:80
+            - 443:443
+            - 3000:3000
+            - 3001:3001
+        volumes:
+            - ./:/var/www/html/appDicasMei
+            - ${HOME}/.bashrc:/var/www/.bashrc
+            - ${HOME}/.ssh:/tmp/.ssh
+            - ./docker/config/apache/sites-enabled:/etc/apache2/sites-enabled
+            - ./docker/config/apache/conf-enabled/custom.conf:/etc/apache2/conf-enabled/custom.conf
+            - composer_cache:/var/www/.composer/cache
+        env_file:
+            - ${PWD}/.local.env
+        networks:
+            - db
+
+    mysql:
+        container_name: dev-mysql
+        image: mysql:5.7
+        ports:
+            - 3307:3306
+        volumes:
+            - ./docker/config/mysql/my.cnf:/etc/mysql/conf.d/custom_config.cnf
+            - database:/var/lib/mysql
+            - ./docker/logs/mysql:/var/log/mysql
+            - ./docker/config/mysql/dump:/docker-entrypoint-initdb.d
+        environment:
+            MYSQL_ROOT_PASSWORD: admin
+        networks:
+            - db
+
+    phpmyadmin:
+        container_name: dev-phpmyadmin
+        image: phpmyadmin/phpmyadmin
+        networks:
+            - db
+        environment:
+            PMA_HOST: mysql
+            PMA_PORT: 3306
+            PMA_USER: root
+            PMA_PASSWORD: admin
+        ports:
+            - '8090:80'
+        volumes:
+            - /sessions
+
+
+volumes:
+    composer_cache: ~
+    database: ~
+    index: ~
+
+networks:
+    db: ~
