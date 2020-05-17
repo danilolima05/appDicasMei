@@ -13,6 +13,7 @@ class ServiceFixtures extends Fixture
 {
     public function load(ObjectManager $manager)
     {
+
         /* These are the standard data of the system */
         $standardInserts = [
             [
@@ -20,25 +21,28 @@ class ServiceFixtures extends Fixture
                 'description' => 'Emita notas fiscais e faça seu IR do MEI',
                 'price'       => 59.90,
                 'recurrence'  => 'yearly',
-                'timeToPay'   => 12
+                'timeToPay'   => 12,
             ],
             [
                 'title'       => 'Regularize sua MEI',
                 'description' => 'Faça alterações cadastrais de acordo com sua necessidade',
                 'price'       => 30,
                 'recurrence'  => 'one time',
-                'timeToPay'   => 1
+                'timeToPay'   => 1,
             ]
         ];
 
         foreach ($standardInserts as $service) {
             if (empty($manager->getRepository('ApiBundle\Entity\Service')->findOneBy(['title' => $service['title']]))) {
+                $currentDate = new \DateTime('now', new \DateTimeZone("America/Sao_Paulo"));
                 $serviceObj = new Service();
                 $serviceObj->setTitle($service['title']);
                 $serviceObj->setDescription($service['description']);
                 $serviceObj->setPrice($service['price']);
                 $serviceObj->setRecurrence($service['recurrence']);
                 $serviceObj->setTimeToPay($service['timeToPay']);
+                $serviceObj->setCreatedAt($currentDate);
+                $serviceObj->setUpdatedAt($currentDate);
 
                 $manager->persist($serviceObj);
             }

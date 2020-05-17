@@ -56,6 +56,34 @@ class Service
      */
     private $timeToPay;
 
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="updated_at", type="datetime", nullable=false)
+     */
+    private $updatedAt;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created_at", type="datetime", nullable=false)
+     */
+    private $createdAt;
+
+    /**
+     * Gets triggered on update and insert
+     *
+     * @ORM\PrePersist()
+     * @ORM\PreUpdate()
+     */
+    public function updatedTimestamps()
+    {
+        $this->updatedAt = new \DateTime('now', new \DateTimeZone("America/Sao_Paulo"));
+
+        if ($this->getCreatedAt() === null) {
+            $this->createdAt = new \DateTime('now', new \DateTimeZone("America/Sao_Paulo"));
+        }
+    }
 
     /**
      * Get id
@@ -155,5 +183,36 @@ class Service
         $this->timeToPay = $timeToPay;
     }
 
+    /**
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @param \DateTime $updatedAt
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param \DateTime $createdAt
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+    }
 }
 

@@ -52,6 +52,13 @@ class User
     /**
      * @var string
      *
+     * @ORM\Column(name="cep", type="string", length=255, nullable=true)
+     */
+    private $cep;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="address", type="string", length=255, nullable=true)
      */
     private $address;
@@ -83,6 +90,20 @@ class User
      * @ORM\Column(name="country", type="string", length=2, nullable=true)
      */
     private $country;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="updated_at", type="datetime", nullable=false)
+     */
+    private $updatedAt;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created_at", type="datetime", nullable=false)
+     */
+    private $createdAt;
 
     /**
      * Get id
@@ -169,6 +190,22 @@ class User
     /**
      * @return string
      */
+    public function getCep()
+    {
+        return $this->cep;
+    }
+
+    /**
+     * @param string $cep
+     */
+    public function setCep($cep)
+    {
+        $this->cep = $cep;
+    }
+
+    /**
+     * @return string
+     */
     public function getAddress()
     {
         return $this->address;
@@ -244,6 +281,38 @@ class User
     public function setCountry($country)
     {
         $this->country = $country;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @param \DateTime $updatedAt
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param \DateTime $createdAt
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
     }
 }
 
