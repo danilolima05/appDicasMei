@@ -2,7 +2,9 @@
 
 namespace ApiBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Integer;
 
 /**
  * User
@@ -104,6 +106,23 @@ class User
      * @ORM\Column(name="created_at", type="datetime", nullable=false)
      */
     private $createdAt;
+
+    /**
+     * @var Integer
+     *
+     * @ORM\Column(name="pagarme_id", type="integer", nullable=true)
+     */
+    private $pagarmeId;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Transaction", mappedBy="user")
+     */
+    private $transactions;
+
+    public function __construct()
+    {
+        $this->transactions = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -313,6 +332,38 @@ class User
     public function setCreatedAt($createdAt)
     {
         $this->createdAt = $createdAt;
+    }
+
+    /**
+     * @return Integer
+     */
+    public function getPagarmeId()
+    {
+        return $this->pagarmeId;
+    }
+
+    /**
+     * @param Integer $pagarmeId
+     */
+    public function setPagarmeId($pagarmeId)
+    {
+        $this->pagarmeId = $pagarmeId;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getTransactions()
+    {
+        return $this->transactions;
+    }
+
+    /**
+     * @param ArrayCollection $transactions
+     */
+    public function setTransactions($transactions)
+    {
+        $this->transactions = $transactions;
     }
 }
 
