@@ -10,3 +10,6 @@ parameters:
     mailer_user: null
     mailer_password: null
     secret: fd3a644a62fef30b905c2f270826109fa669dda2
+
+    pagarme_api_key: ak_test_Oa5OlDQO8MLqiqKBYT1SlVQt0GnsPT
+    pagarme_api_secret: ek_test_f0OUBvw3QVPoew3iaVrFzxX8Sc12xZ
