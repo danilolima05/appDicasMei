@@ -1,0 +1,19 @@
+/logs/*
+!/logs/.gitignore
+!/logs/apache2
+/logs/apache2/*
+!logs/apache2/.gitignore
+!/logs/mysql
+/logs/mysql/*
+!logs/mysql/.gitignore
+# !/data/mysql
+# /data/mysql/*
+# !data/mysql/.gitignore
+.local.env
+# php/apache/sites-enabled/*
+# !php/apache/sites-enabled/.gitignore
+# config/apache/sites-enabled/*
+# !config/apache/sites-enabled/.gitignore
+# .idea
+# config/mysql/dump/*
+# !config/mysql/dump/.gitignore
