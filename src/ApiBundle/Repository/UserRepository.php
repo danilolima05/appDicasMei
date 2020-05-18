@@ -2,6 +2,8 @@
 
 namespace ApiBundle\Repository;
 
+use ApiBundle\Entity\User;
+
 /**
  * UserRepository
  *
@@ -10,4 +12,26 @@ namespace ApiBundle\Repository;
  */
 class UserRepository extends \Doctrine\ORM\EntityRepository
 {
+
+    public function save(User $user)
+    {
+        try {
+            if (empty($user)) {
+                throw  new \RuntimeException('Empty User');
+            }
+
+            $currentDate = new \DateTime('now', new \DateTimeZone("America/Sao_Paulo"));
+            if (empty($user->getCreatedAt())) {
+                $user->setCreatedAt($currentDate);
+            }
+            $user->setUpdatedAt($currentDate);
+
+            $manager = $this->getEntityManager();
+            $manager->persist($user);
+            $manager->flush();
+        }
+        catch (\Exception $e) {
+            throw  new \RuntimeException($e->getMessage());
+        }
+    }
 }

@@ -4,6 +4,7 @@ namespace ApiBundle\Controller;
 
 use ApiBundle\Entity\User;
 use ApiBundle\Form\UserType;
+use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -62,6 +63,16 @@ class UserController extends Controller
      * @Route("/", methods={"POST"})
      * @param Request $request
      * @return JsonResponse
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="Create a User"
+     * )
+     *
+     * @SWG\Response(
+     *     response=500,
+     *     description="Internal error"
+     * )
      */
     public function saveAction(Request $request)
     {
@@ -79,25 +90,21 @@ class UserController extends Controller
             $form = $this->createForm(UserType::class, $user);
             $form->submit($dataArr);
 
-            $manager = $this->getDoctrine()->getManager();
-
-            $currentDate = new \DateTime('now', new \DateTimeZone("America/Sao_Paulo"));
-            $user->setCreatedAt($currentDate);
-            $user->setUpdatedAt($currentDate);
-
-            $manager->persist($user);
-            $manager->flush();
+            $this->getDoctrine()->getRepository("ApiBundle:User")->save($user);
 
             $response = [
                 'success' => true,
                 'message' => 'User created with success'
             ];
+
+            $statusCode = 200;
         }
         catch (\Exception $e) {
             $response['message'] = $e->getMessage();
+            $statusCode = 500;
         }
 
-        return new JsonResponse($response);
+        return new JsonResponse($response, $statusCode);
     }
 
     /**
@@ -107,7 +114,6 @@ class UserController extends Controller
      */
     public function updateAction(Request $request)
     {
-
         $response = [
             'success' => false,
             'message' => null
@@ -127,24 +133,21 @@ class UserController extends Controller
             $form = $this->createForm(UserType::class, $user);
             $form->submit($dataArr);
 
-            $manager = $this->getDoctrine()->getManager();
-
-            $currentDate = new \DateTime('now', new \DateTimeZone("America/Sao_Paulo"));
-            $user->setUpdatedAt($currentDate);
-
-            $manager->persist($user);
-            $manager->flush();
+            $this->getDoctrine()->getRepository("ApiBundle:User")->save($user);
 
             $response = [
                 'success' => true,
-                'message' => 'User created with success'
+                'message' => 'User updated with success'
             ];
+            $statusCode = 200;
         }
         catch (\Exception $e) {
             $response['message'] = $e->getMessage();
+            $statusCode = 500;
         }
 
-        return new JsonResponse($response);
+        return new JsonResponse($response, $statusCode);
+
     }
 
     /**
