@@ -72,3 +72,16 @@ swiftmailer:
 sensio_framework_extra:
    router:
         annotations: false
+
+nelmio_api_doc:
+    documentation:
+        definitios:
+            Error:
+                type: object
+                properties:
+                    success:
+                        type: boolean
+                        example: false
+                    error:
+                        type: string
+                        example: message

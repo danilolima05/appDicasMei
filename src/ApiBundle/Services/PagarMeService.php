@@ -60,8 +60,20 @@ class PagarMeService
      */
     public function getAddressByZipCode(string $zipcode)
     {
-        $route = 'zipcodes/';
-        $url = $this->endpointBase.$route.$zipcode;
+        $route = 'zipcodes/'.$zipcode;
+        $url = $this->endpointBase.$route;
+
+        return $this->apiService->consumeAPI('GET', $url, ['api_key' => $this->apiKey]);
+    }
+
+    /**
+     * @param $transactionId
+     * @return mixed
+     */
+    public function getAntifraudAnalyses($transactionId)
+    {
+        $route = 'transactions/'.$transactionId.'/antifraud_analyses';
+        $url = $this->endpointBase.$route;
 
         return $this->apiService->consumeAPI('GET', $url, ['api_key' => $this->apiKey]);
     }
@@ -120,9 +132,73 @@ class PagarMeService
         }
     }
 
-    public function createTransaction(Transaction $transaction)
+    public function createTransaction(Transaction $transaction, $cardNumberInformation = [])
     {
+        try {
+            $data = [
+                "api_key" => $this->apiKey,
+                "amount" => $transaction->getService()->getPrice() * 100,
+                "card_number" => $cardNumberInformation['cc_number'],
+                "card_cvv" => $cardNumberInformation['cc_cvv'],
+                "card_expiration_date" => $cardNumberInformation['cc_expiration_date'],
+                "card_holder_name" => $cardNumberInformation['cc_name'],
+                "customer" =>
+                    [
+                        "external_id" => (string)$transaction->getUser()->getId(),
+                        "name" => $transaction->getUser()->getName(),
+                        "type" => "individual",
+                        "country" => "br",
+                        "email" => $transaction->getUser()->getEmail(),
+                        "documents" => [
+                            (object)[
+                                "type" => "cpf",
+                                "number" => $transaction->getUser()->getCpf()
+                            ]
+                        ],
+                        "phone_numbers" => [$transaction->getUser()->getPhone()],
+                        "birthday" => "1965-01-01"
+                    ],
+                "billing" => [
+                    "name" => $transaction->getUser()->getName(),
+                    "address" => [
+                        "country" => "br",
+                        "state" => $transaction->getUser()->getState(),
+                        "city" => $transaction->getUser()->getCity(),
+                        "neighborhood" => $transaction->getUser()->getNeighborhood(),
+                        "street" => $transaction->getUser()->getAddress(),
+                        "street_number" => "9999",
+                        "zipcode" => $transaction->getUser()->getCep()
+                    ]
+                ],
+                "items" => [
+                    (object)[
+                        "id" => (string)$transaction->getService()->getId(),
+                        "title" => $transaction->getService()->getTitle(),
+                        "unit_price" => $transaction->getService()->getPrice() * 100,
+                        "quantity" => 1,
+                        "tangible" => false
+                    ]
+                ]
+            ];
 
+            $route = 'transactions';
+            $url = $this->endpointBase.$route;
+
+            $response = $this->apiService->consumeAPI('POST', $url, json_encode($data));
+
+            if (!empty($response->status)) {
+                $transaction->setStatus($response->status);
+                $transaction->setPagarmeId($response->tid);
+
+                $manager = $this->container->get('doctrine')->getManager();
+                $manager->persist($transaction);
+                $manager->flush();
+            }
+
+            return json_encode(['success' => true, 'response' => $response]);
+
+        } catch (\Exception $e) {
+            return json_encode(['success' => false, 'response' => $e->getMessage()]);
+        }
     }
-
 }

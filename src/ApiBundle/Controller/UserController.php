@@ -18,7 +18,22 @@ class UserController extends Controller
 {
     /**
      * @Route("/", methods={"GET"})
-     * @return Response
+     * @return JsonResponse
+     *
+     * @SWG\Get(
+     *     path="api/users/",
+     *     tags={"users"},
+     *     operationId="getUser",
+     *     description="route to get all users",
+     *     @SWG\Response(
+     *         response=200,
+     *         description="Request executed with success"
+     *     ),
+     *     @SWG\Response(
+     *         response=500,
+     *         description="Internal error"
+     *     )
+     * )
      */
     public function indexAction()
     {
@@ -33,6 +48,28 @@ class UserController extends Controller
      * @Route("/{id}", methods={"GET"})
      * @param $id
      * @return JsonResponse
+     *
+     * @SWG\Get(
+     *     path="api/users/{id}",
+     *     tags={"users"},
+     *     operationId="getUserById",
+     *     description="route to get a specific user ",
+     *     @SWG\Parameter(
+     *         description="User id to get",
+     *         in="path",
+     *         name="userId",
+     *         required=true,
+     *         type="integer"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="Request executed with success"
+     *     ),
+     *     @SWG\Response(
+     *         response=500,
+     *         description="Internal error"
+     *     )
+     * )
      */
     public function getByIdAction($id)
     {
@@ -40,6 +77,7 @@ class UserController extends Controller
             "success" => false,
             "message" => null
         ];
+        $status = 200;
 
         try {
             $doctrine = $this->getDoctrine();
@@ -54,9 +92,10 @@ class UserController extends Controller
         }
         catch (\Exception $e) {
             $response['message'] = $e->getMessage();
+            $status = 500;
         }
 
-        return new JsonResponse($response);
+        return new JsonResponse($response, $status);
     }
 
     /**
@@ -64,15 +103,21 @@ class UserController extends Controller
      * @param Request $request
      * @return JsonResponse
      *
-     * @SWG\Response(
-     *     response=200,
-     *     description="Create a User"
+     * @SWG\Post(
+     *     path="api/users/",
+     *     tags={"users"},
+     *     operationId="createUser",
+     *     description="Post to create an User, fields requireds: name, email, cpf, phone (+5514988888888), cep, address, neighborhood, city, state(eg: SP), country(eg: BR)",
+     *     @SWG\Response(
+     *         response=200,
+     *         description="Request executed with success"
+     *     ),
+     *     @SWG\Response(
+     *         response=500,
+     *         description="Internal error"
+     *     )
      * )
      *
-     * @SWG\Response(
-     *     response=500,
-     *     description="Internal error"
-     * )
      */
     public function saveAction(Request $request)
     {
@@ -81,6 +126,7 @@ class UserController extends Controller
             'success' => false,
             'message' => null
         ];
+        $status = 200;
 
         try {
             $data = $request->getContent();
@@ -97,17 +143,32 @@ class UserController extends Controller
                 'message' => 'User created with success'
             ];
 
-            $statusCode = 200;
         }
         catch (\Exception $e) {
             $response['message'] = $e->getMessage();
-            $statusCode = 500;
+            $status = 500;
         }
 
-        return new JsonResponse($response, $statusCode);
+        return new JsonResponse($response, $status);
     }
 
     /**
+     *
+     * @SWG\Put(
+     *     path="api/users/",
+     *     tags={"users"},
+     *     operationId="updateUser",
+     *     description="route to update an User, fields requireds:id and the field you want to change",
+     *     @SWG\Response(
+     *         response=200,
+     *         description="Request executed with success"
+     *     ),
+     *     @SWG\Response(
+     *         response=500,
+     *         description="Internal error"
+     *     )
+     * )
+     *
      * @Route("/", methods={"PUT"})
      * @param Request $request
      * @return JsonResponse
@@ -118,6 +179,7 @@ class UserController extends Controller
             'success' => false,
             'message' => null
         ];
+        $statusCode = 200;
 
         try {
             $data = $request->getContent();
@@ -139,7 +201,6 @@ class UserController extends Controller
                 'success' => true,
                 'message' => 'User updated with success'
             ];
-            $statusCode = 200;
         }
         catch (\Exception $e) {
             $response['message'] = $e->getMessage();
@@ -155,6 +216,29 @@ class UserController extends Controller
      * @Route("/{id}", methods={"DELETE"})
      * @param $id
      * @return JsonResponse
+     *
+     * @SWG\Delete(
+     *     path="api/users/{id}",
+     *     tags={"users"},
+     *     operationId="deleteUser",
+     *     description="route to delete an User ",
+     *     @SWG\Parameter(
+     *         description="User id to delete",
+     *         in="path",
+     *         name="userId",
+     *         required=true,
+     *         type="integer"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="Request executed with success"
+     *     ),
+     *     @SWG\Response(
+     *         response=500,
+     *         description="Internal error"
+     *     )
+     * )
+     *
      */
     public function deleteAction($id)
     {
@@ -162,6 +246,8 @@ class UserController extends Controller
             "success" => false,
             "message" => null
         ];
+        $statusCode = 200;
+
 
         try {
             $doctrine = $this->getDoctrine();
@@ -182,8 +268,9 @@ class UserController extends Controller
         }
         catch (\Exception $e) {
             $response['message'] = $e->getMessage();
+            $statusCode = 500;
         }
 
-        return new JsonResponse($response);
+        return new JsonResponse($response, $statusCode);
     }
 }

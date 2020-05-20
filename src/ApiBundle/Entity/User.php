@@ -115,7 +115,7 @@ class User
     private $pagarmeId;
 
     /**
-     * @ORM\OneToMany(targetEntity="Transaction", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="ApiBundle\Entity\Transaction", mappedBy="user")
      */
     private $transactions;
 

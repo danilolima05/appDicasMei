@@ -50,13 +50,20 @@ class Transaction
     private $createdAt;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="transactions")
+     * @var Integer
+     *
+     * @ORM\Column(name="pagarme_id", type="integer", nullable=true)
+     */
+    private $pagarmeId;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="ApiBundle\Entity\User", inversedBy="transactions")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
     private $user;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Service", inversedBy="transactions")
+     * @ORM\ManyToOne(targetEntity="ApiBundle\Entity\Service", inversedBy="transactions")
      * @ORM\JoinColumn(name="service_id", referencedColumnName="id")
      */
     private $service;
@@ -133,6 +140,22 @@ class Transaction
     public function setCreatedAt($createdAt)
     {
         $this->createdAt = $createdAt;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPagarmeId()
+    {
+        return $this->pagarmeId;
+    }
+
+    /**
+     * @param int $pagarmeId
+     */
+    public function setPagarmeId($pagarmeId)
+    {
+        $this->pagarmeId = $pagarmeId;
     }
 
     /**
