@@ -7,7 +7,7 @@ To install the project just need to do a clone and follow the steps:
 
 1 - Make sure there is no services using the port 80
 
-2 - Build the docker
+2 - Go to the project folder and build the docker
 
     `docker-compose up --build -d`
 
