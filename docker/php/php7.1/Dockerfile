@@ -5,7 +5,6 @@ ENV COMPOSER_MEMORY_LIMIT=-1
 
 RUN apt-get update && apt-get install -y \
       bash-completion \
-      rsync \
       vim \
       git \
       curl \
@@ -33,11 +32,6 @@ RUN docker-php-ext-install \
     mcrypt \
     -j$(nproc) calendar
 
-# Install mongo
-RUN apt-get update && apt-get upgrade -y && apt-get install openssl libssl-dev libcurl4-openssl-dev -y
-RUN pecl install mongodb \
-&& echo "extension=mongodb.so" > /usr/local/etc/php/conf.d/ext-mongodb.ini
-
 # Adding sudo to www-data user
 RUN usermod -aG sudo www-data
 RUN echo "www-data     ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
@@ -63,30 +57,12 @@ RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 RUN a2enmod rewrite
 RUN a2enmod ssl
 
-# Install NodeJS 8.11.4
-#RUN curl -O https://nodejs.org/dist/v8.11.4/node-v8.11.4-linux-x64.tar.xz \
-#    && mkdir /usr/local/lib/nodejs \
-#    && tar -xJf node-v8.11.4-linux-x64.tar.xz -C /usr/local/lib/nodejs \
-#    && rm node-v8.11.4-linux-x64.tar.xz \
-#    && export NODEJS_HOME=/usr/local/lib/nodejs/node-v8.11.4-linux-x64/bin \
-#    && export PATH=$NODEJS_HOME:$PATH \
-#    && ln -s /usr/local/lib/nodejs/node-v8.11.4-linux-x64/bin/node /usr/bin/node \
-#    && ln -s /usr/local/lib/nodejs/node-v8.11.4-linux-x64/bin/npm /usr/bin/npm
-
-#RUN npm install --global gulp-cli \
-#&& ln -s /usr/local/lib/nodejs/node-v8.11.4-linux-x64/bin/gulp /usr/bin/gulp  
-
 # Add composer
 RUN curl -o /tmp/composer-setup.php https://getcomposer.org/installer \
       && curl -o /tmp/composer-setup.sig https://composer.github.io/installer.sig \
       && php -r "if (hash('SHA384', file_get_contents('/tmp/composer-setup.php')) !== trim(file_get_contents('/tmp/composer-setup.sig'))) { unlink('    /tmp/composer-setup.php'); echo 'Invalid installer' . PHP_EOL; exit(1); }" \
       && php /tmp/composer-setup.php --version=1.7.2 --no-ansi --install-dir=/usr/local/bin --filename=composer --snapshot \
       && rm -f /tmp/composer-setup.*
-
-# Instal Symfony
-RUN mkdir -p /usr/local/bin
-RUN curl -LsS https://symfony.com/installer -o /usr/local/bin/symfony
-RUN chmod a+x /usr/local/bin/symfony
 
 # Adding PHP config files
 COPY config/php.ini /usr/local/etc/php/php.ini

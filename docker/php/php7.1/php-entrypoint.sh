@@ -18,11 +18,6 @@ chmod -R 600 /var/www/.ssh/*
 chown -R root:root /root/.ssh
 chmod -R 600 /root/.ssh/*
 
-#schema update --- datafixture com append
-# composer install
-# php bin/console doctrine:schema:create
-# php bin/console doctrine:fixtures:load --append --fixtures=src/ApiBundle/DataFixtures
-
 
 # Apache2 foreground
 /usr/sbin/apache2ctl -D FOREGROUND
